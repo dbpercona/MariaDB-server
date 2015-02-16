@@ -224,7 +224,7 @@ unlocking, not the corresponding function. */
 #  endif/* UNIV_SYNC_DEBUG */
 # else	/* UNIV_DEBUG */
 #  define rw_lock_create(K, L, level)				\
-	pfs_rw_lock_create_func((K), (L), __FILE__, __LINE__)
+	pfs_rw_lock_create_func((K), (L), #L, __FILE__, __LINE__)
 # endif	/* UNIV_DEBUG */
 
 /******************************************************************
@@ -294,8 +294,8 @@ rw_lock_create_func(
 # ifdef UNIV_SYNC_DEBUG
 	ulint		level,		/*!< in: level */
 # endif /* UNIV_SYNC_DEBUG */
-	const char*	cmutex_name,	/*!< in: mutex name */
 #endif /* UNIV_DEBUG */
+	const char*	cmutex_name,	/*!< in: mutex name */
 	const char*	cfile_name,	/*!< in: file name where created */
 	ulint		cline);		/*!< in: file line where created */
 /******************************************************************//**
@@ -610,6 +610,7 @@ struct rw_lock_t {
 #endif
 	ulint count_os_wait;	/*!< Count of os_waits. May not be accurate */
 	const char*	cfile_name;/*!< File name where lock created */
+	const char*	lock_name; /*!< lock name */
         /* last s-lock file/line is not guaranteed to be correct */
 	const char*	last_s_file_name;/*!< File name where last s-locked */
 	const char*	last_x_file_name;/*!< File name where last x-locked */
@@ -688,8 +689,8 @@ pfs_rw_lock_create_func(
 # ifdef UNIV_SYNC_DEBUG
 	ulint		level,		/*!< in: level */
 # endif /* UNIV_SYNC_DEBUG */
-	const char*	cmutex_name,	/*!< in: mutex name */
 #endif /* UNIV_DEBUG */
+	const char*	cmutex_name,	/*!< in: mutex name */
 	const char*	cfile_name,	/*!< in: file name where created */
 	ulint		cline);		/*!< in: file line where created */
 

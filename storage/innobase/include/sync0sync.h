@@ -180,7 +180,7 @@ necessary only if the memory block containing it is freed. */
 #  endif/* UNIV_SYNC_DEBUG */
 # else
 #  define mutex_create(K, M, level)				\
-	pfs_mutex_create_func((K), (M), __FILE__, __LINE__)
+	pfs_mutex_create_func((K), (M), #M, __FILE__, __LINE__)
 # endif	/* UNIV_DEBUG */
 
 # define mutex_enter(M)						\
@@ -231,8 +231,8 @@ void
 mutex_create_func(
 /*==============*/
 	ib_mutex_t*	mutex,		/*!< in: pointer to memory */
-#ifdef UNIV_DEBUG
 	const char*	cmutex_name,	/*!< in: mutex name */
+#ifdef UNIV_DEBUG
 # ifdef UNIV_SYNC_DEBUG
 	ulint		level,		/*!< in: level */
 # endif /* UNIV_SYNC_DEBUG */
@@ -305,8 +305,8 @@ pfs_mutex_create_func(
 /*==================*/
 	PSI_mutex_key	key,		/*!< in: Performance Schema key */
 	ib_mutex_t*	mutex,		/*!< in: pointer to memory */
-# ifdef UNIV_DEBUG
 	const char*	cmutex_name,	/*!< in: mutex name */
+# ifdef UNIV_DEBUG
 #  ifdef UNIV_SYNC_DEBUG
 	ulint		level,		/*!< in: level */
 #  endif /* UNIV_SYNC_DEBUG */
@@ -763,22 +763,22 @@ struct ib_mutex_t {
 	UT_LIST_NODE_T(ib_mutex_t)	list; /*!< All allocated mutexes are put into
 				a list.	Pointers to the next and prev. */
 #ifdef UNIV_SYNC_DEBUG
-	const char*	file_name;	/*!< File where the mutex was locked */
-	ulint	line;		/*!< Line where the mutex was locked */
 	ulint	level;		/*!< Level in the global latching order */
 #endif /* UNIV_SYNC_DEBUG */
+
+	const char*	file_name;	/*!< File where the mutex was locked */
+	ulint		line;		/*!< Line where the mutex was locked */
 	const char*	cfile_name;/*!< File name where mutex created */
 	ulint		cline;	/*!< Line where created */
 	ulong		count_os_wait;	/*!< count of os_wait */
+	const char*	cmutex_name;	/*!< mutex name */
+	os_thread_id_t thread_id;	/*!< The thread id of the thread
+					which locked the mutex. */
 #ifdef UNIV_DEBUG
 
 /** Value of mutex_t::magic_n */
 # define MUTEX_MAGIC_N	979585UL
-
-	os_thread_id_t thread_id; /*!< The thread id of the thread
-				which locked the mutex. */
 	ulint		magic_n;	/*!< MUTEX_MAGIC_N */
-	const char*	cmutex_name;	/*!< mutex name */
 	ulint		ib_mutex_type;	/*!< 0=usual mutex, 1=rw_lock mutex */
 #endif /* UNIV_DEBUG */
 #ifdef UNIV_PFS_MUTEX

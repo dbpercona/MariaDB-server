@@ -209,8 +209,8 @@ rw_lock_create_func(
 # ifdef UNIV_SYNC_DEBUG
 	ulint		level,		/*!< in: level */
 # endif /* UNIV_SYNC_DEBUG */
-	const char*	cmutex_name,	/*!< in: mutex name */
 #endif /* UNIV_DEBUG */
+	const char*	cmutex_name,	/*!< in: mutex name */
 	const char*	cfile_name,	/*!< in: file name where created */
 	ulint		cline)		/*!< in: file line where created */
 {
@@ -223,8 +223,7 @@ rw_lock_create_func(
 
 	lock->mutex.cfile_name = cfile_name;
 	lock->mutex.cline = cline;
-
-	ut_d(lock->mutex.cmutex_name = cmutex_name);
+	lock->mutex.lock_name = cmutex_name;
 	ut_d(lock->mutex.ib_mutex_type = 1);
 #else /* INNODB_RW_LOCKS_USE_ATOMICS */
 # ifdef UNIV_DEBUG
@@ -253,7 +252,7 @@ rw_lock_create_func(
 
 	lock->cfile_name = cfile_name;
 	lock->cline = (unsigned int) cline;
-
+	lock->lock_name = cmutex_name;
 	lock->count_os_wait = 0;
 	lock->last_s_file_name = "not yet reserved";
 	lock->last_x_file_name = "not yet reserved";

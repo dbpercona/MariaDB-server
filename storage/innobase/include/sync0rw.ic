@@ -546,8 +546,8 @@ pfs_rw_lock_create_func(
 #  ifdef UNIV_SYNC_DEBUG
 	ulint		level,		/*!< in: level */
 #  endif /* UNIV_SYNC_DEBUG */
-	const char*	cmutex_name,	/*!< in: mutex name */
 # endif /* UNIV_DEBUG */
+	const char*	cmutex_name,	/*!< in: mutex name */
 	const char*	cfile_name,	/*!< in: file name where created */
 	ulint		cline)		/*!< in: file line where created */
 {
@@ -560,8 +560,8 @@ pfs_rw_lock_create_func(
 #  ifdef UNIV_SYNC_DEBUG
 			    level,
 #  endif /* UNIV_SYNC_DEBUG */
-			    cmutex_name,
 # endif /* UNIV_DEBUG */
+			    cmutex_name,
 			    cfile_name,
 			    cline);
 }

@@ -4,7 +4,7 @@ Copyright (c) 2000, 2014, Oracle and/or its affiliates. All Rights Reserved.
 Copyright (c) 2008, 2009 Google Inc.
 Copyright (c) 2009, Percona Inc.
 Copyright (c) 2012, Facebook Inc.
-Copyright (c) 2013, 2014, SkySQL Ab.
+Copyright (c) 2013, 2015. MariaDB Corporation
 
 Portions of this file contain modifications contributed and copyrighted by
 Google, Inc. Those modifications are gratefully acknowledged and are described
@@ -628,7 +628,7 @@ ha_create_table_option innodb_table_option_list[]=
   HA_TOPTION_BOOL("PAGE_COMPRESSED", page_compressed, 0),
   /* With this option user can set zip compression level for page
   compression for this table*/
-  HA_TOPTION_NUMBER("PAGE_COMPRESSION_LEVEL", page_compression_level, ULINT_UNDEFINED, 0, 9, 1),
+  HA_TOPTION_NUMBER("PAGE_COMPRESSION_LEVEL", page_compression_level, 0, 1, 9, 1),
   /* With this option user can enable atomic writes feature for this table */
   HA_TOPTION_ENUM("ATOMIC_WRITES", atomic_writes, "DEFAULT,ON,OFF", 0),
   /* With this option the user can enable page encryption for the table */
@@ -11541,7 +11541,7 @@ innobase_table_flags(
 	modified by another thread while the table is being created. */
 	const ulint     default_compression_level = page_zip_level;
 
-	const ulint default_encryption_key = 1;
+	const ulint default_encryption_key = 0;
 
 	*flags = 0;
 	*flags2 = 0;
@@ -11859,7 +11859,7 @@ ha_innobase::check_table_options(
 
 	/* Check page compression level requirements, some of them are
 	already checked above */
-	if ((ulint)options->page_compression_level != ULINT_UNDEFINED) {
+	if (options->page_compression_level != 0) {
 		if (options->page_compressed == false) {
 			push_warning(
 				thd, Sql_condition::WARN_LEVEL_WARN,
@@ -11869,7 +11869,7 @@ ha_innobase::check_table_options(
 			return "PAGE_COMPRESSION_LEVEL";
 		}
 
-		if (options->page_compression_level < 0 || options->page_compression_level > 9) {
+		if (options->page_compression_level < 1 || options->page_compression_level > 9) {
 			push_warning_printf(
 				thd, Sql_condition::WARN_LEVEL_WARN,
 				HA_WRONG_CREATE_OPTION,
@@ -20678,6 +20678,8 @@ i_s_innodb_sys_foreign_cols,
 i_s_innodb_sys_tablespaces,
 i_s_innodb_sys_datafiles,
 i_s_innodb_changed_pages,
+i_s_innodb_mutexes,
+i_s_innodb_sys_semaphore_waits,
 i_s_innodb_tablespaces_encryption,
 i_s_innodb_tablespaces_scrubbing
 maria_declare_plugin_end;
